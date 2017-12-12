@@ -8,6 +8,7 @@
 import numpy as np
 import re
 import random
+import feedparser
 
 def loadDataSet():
     postingList=[['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],
@@ -146,3 +147,6 @@ def spamTest():
     print ('the error rate is:',float(errorCount)/len(testSet))
 
 spamTest()
+
+ny = feedparser.parse('https://newyork.craigslist.org/search/m4m?format=rss')
+print len(ny['entries'])
