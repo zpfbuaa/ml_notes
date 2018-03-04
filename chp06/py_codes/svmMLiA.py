@@ -5,6 +5,7 @@ Chapter 5 source file for Machine Learing in Action
 '''
 from numpy import *
 from time import sleep
+import json
 
 def loadDataSet(fileName):
     dataMat = []; labelMat = []
@@ -230,13 +231,17 @@ def loadImages(dirName):
     return trainingMat, hwLabels    
 
 def testDigits(kTup=('rbf', 10)):
-    dataArr,labelArr = loadImages('trainingDigits')
+    dataArr,labelArr = loadImages('../'+'trainingDigits')
     b,alphas = smoP(dataArr, labelArr, 200, 0.0001, 10000, kTup)
     datMat=mat(dataArr); labelMat = mat(labelArr).transpose()
     svInd=nonzero(alphas.A>0)[0]
     sVs=datMat[svInd] 
-    labelSV = labelMat[svInd];
+    labelSV = labelMat[svInd]
+    # print('Support Vectors are :',sVs)
+    print('index are', svInd)
+
     print "there are %d Support Vectors" % shape(sVs)[0]
+
     m,n = shape(datMat)
     errorCount = 0
     for i in range(m):
@@ -244,14 +249,17 @@ def testDigits(kTup=('rbf', 10)):
         predict=kernelEval.T * multiply(labelSV,alphas[svInd]) + b
         if sign(predict)!=sign(labelArr[i]): errorCount += 1
     print "the training error rate is: %f" % (float(errorCount)/m)
-    dataArr,labelArr = loadImages('testDigits')
+
+    dataArr,labelArr = loadImages('../'+'testDigits')
     errorCount = 0
     datMat=mat(dataArr); labelMat = mat(labelArr).transpose()
     m,n = shape(datMat)
     for i in range(m):
         kernelEval = kernelTrans(sVs,datMat[i,:],kTup)
         predict=kernelEval.T * multiply(labelSV,alphas[svInd]) + b
-        if sign(predict)!=sign(labelArr[i]): errorCount += 1    
+        if sign(predict)!=sign(labelArr[i]):
+            errorCount += 1
+            print(datMat[i], labelMat)
     print "the test error rate is: %f" % (float(errorCount)/m) 
 
 
